@@ -2,6 +2,7 @@ const router = require("express").Router();
 const {databaseConnection} = require("../../database");
 const uuid = require("uuid/v1");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 const {registerValidation,loginValidation} = require("../../validation");
 // for registering a user
 router.post("/user/register",async(req, res) => {
@@ -17,7 +18,6 @@ router.post("/user/register",async(req, res) => {
         }
         else{
             res.status(200).send({msg:'user is sucessfully created'})}
-    
     })
 });
 
@@ -37,7 +37,12 @@ router.post('/user/login',async (req,res)=>{
             {
                return res.status(400).send({msg:'wrong password! Try again'})
             }
-           res.status(200).send({msg:'Login sucessful'})
+           const payload={
+               id:row[0].user_id
+           }
+           var token=jwt.sign(payload,'hkfkfnknfknfknfknkfnkfn',{expiresIn:3600000})
+             res.status(200).send({token:token,
+                                msg:'hurray! you are logged in'})
         })
         
     })
